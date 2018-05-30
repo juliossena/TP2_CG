@@ -2,7 +2,7 @@
  * World.cpp
  *
  *  Created on: 29 de mai de 2018
- *      Author: J�lio Sena
+ *      Author: J�lio Sena
  */
 
 #include "World.h"
@@ -13,8 +13,10 @@
 void solidSphereIntern(float radius, int stacks, int columns);
 int numberRandon(int smaller, int bigger);
 
-World::World(float angle, float angleSatellitesfloat, float pos[], float scale, int numberSatellites, bool isEarth) {
+World::World(float angle, float angleSatellitesfloat, float pos[], float scale, int numberSatellites, bool isEarth, int texture, int textureSatellite) {
 	// TODO Auto-generated constructor stub
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, texture);
 	glPushMatrix();
 		glRotatef(0, 1.0, 0.0, 0.0); // Rotação no eixo x
 		glRotatef(angle, 0.0, 1.0, 0.0); // Rotação no eixo y
@@ -22,6 +24,8 @@ World::World(float angle, float angleSatellitesfloat, float pos[], float scale, 
 		glTranslatef(pos[0], pos[1], pos[2]);
 		solidSphereIntern(scale, 20, 20);
 		for (int i = 0 ; i < numberSatellites ; i++) {
+			glEnable(GL_TEXTURE_2D);
+			glBindTexture(GL_TEXTURE_2D, textureSatellite);
 			glPushMatrix();
 				glRotatef(0, 1, 0.0, 0.0); // Rotação no eixo x
 				glRotatef(angleSatellitesfloat / (i + 1), 0, 1.0, 0.0); // Rotação no eixo y
@@ -29,6 +33,7 @@ World::World(float angle, float angleSatellitesfloat, float pos[], float scale, 
 				solidSphereIntern(scale / 10.0 , 20, 20);
 
 			glPopMatrix();
+			glDisable(GL_TEXTURE_2D);
 		}
 
 		if (isEarth) {
@@ -42,6 +47,7 @@ World::World(float angle, float angleSatellitesfloat, float pos[], float scale, 
 
 
 	glPopMatrix();
+	glDisable(GL_TEXTURE_2D);
 }
 
 World::~World() {

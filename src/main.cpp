@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 
+#include <SOIL/SOIL.h>
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 #include <cmath>
@@ -9,6 +10,8 @@
 #include "models/Asteroids.h"
 #include "functions/escreveTexto.h"
 #include <time.h>
+#include <stdio.h>
+#include <string.h>
 
 using namespace std;
 
@@ -28,6 +31,17 @@ static float larguraJanela, alturaJanela;       // (w,h) da janela
 static float anguloEsferaY = 0;                 // Rotação da esfera em torno do eixo y
 static int esferaLados = 20;                   // Quantas subdivisões latitudinais/longitudinais da esfera
 static bool localViewer = false;
+
+static int marsTexture;
+static int solTexture;
+static int luaTexture;
+static int mercurioTexture;
+static int venusTexture;
+static int terraTexture;
+static int jupiterTexture;
+static int saturnoTexture;
+static int uranoTexture;
+static int netunoTexture;
 
 int posAsteroids[1000];
 float sizeAsteroids[1000];
@@ -110,6 +124,101 @@ void setup(void)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+    //CARREGA TEXTURA MARTE
+    marsTexture = SOIL_load_OGL_texture
+    (
+    		"mars-small.jpg",
+    		SOIL_LOAD_AUTO,
+			SOIL_CREATE_NEW_ID,
+			SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
+    );
+
+    //CARREGA TEXTURA Sol
+	solTexture = SOIL_load_OGL_texture
+	(
+			"sol.jpg",
+			SOIL_LOAD_AUTO,
+			SOIL_CREATE_NEW_ID,
+			SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
+	);
+
+	//CARREGA TEXTURA Lua
+	luaTexture = SOIL_load_OGL_texture
+	(
+			"lua.jpg",
+			SOIL_LOAD_AUTO,
+			SOIL_CREATE_NEW_ID,
+			SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
+	);
+
+	//CARREGA TEXTURA Mercurio
+	mercurioTexture = SOIL_load_OGL_texture
+	(
+			"mercurio.jpg",
+			SOIL_LOAD_AUTO,
+			SOIL_CREATE_NEW_ID,
+			SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
+	);
+
+	//CARREGA TEXTURA Mercurio
+	venusTexture = SOIL_load_OGL_texture
+	(
+			"venus.jpg",
+			SOIL_LOAD_AUTO,
+			SOIL_CREATE_NEW_ID,
+			SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
+	);
+
+	//CARREGA TEXTURA Terra
+	terraTexture = SOIL_load_OGL_texture
+	(
+			"terra.jpg",
+			SOIL_LOAD_AUTO,
+			SOIL_CREATE_NEW_ID,
+			SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
+	);
+
+	//CARREGA TEXTURA jupiter
+	jupiterTexture = SOIL_load_OGL_texture
+	(
+			"jupiter.jpg",
+			SOIL_LOAD_AUTO,
+			SOIL_CREATE_NEW_ID,
+			SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
+	);
+
+	//CARREGA TEXTURA saturno
+	saturnoTexture = SOIL_load_OGL_texture
+	(
+			"saturno.jpg",
+			SOIL_LOAD_AUTO,
+			SOIL_CREATE_NEW_ID,
+			SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
+	);
+
+	//CARREGA TEXTURA urano
+	uranoTexture = SOIL_load_OGL_texture
+	(
+			"urano.jpg",
+			SOIL_LOAD_AUTO,
+			SOIL_CREATE_NEW_ID,
+			SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
+	);
+
+	//CARREGA TEXTURA neturno
+	netunoTexture = SOIL_load_OGL_texture
+	(
+			"netuno.jpg",
+			SOIL_LOAD_AUTO,
+			SOIL_CREATE_NEW_ID,
+			SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
+	);
+
+
+    if(solTexture == 0) {
+    	cout << "problem ao carregar Textura" << endl;
+    }
+
     // Não mostrar faces do lado de dentro
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
@@ -173,8 +282,8 @@ void desenhaCena()
 				  0, 0, 0,
 				  0, 1, 0);
     } else if (posCam == 2) {
-    	gluLookAt(posX, posY, 5,
-    			0, 0, 0,
+    	gluLookAt(10, 10, 5,
+    			posX, posY, 0,
 				0, 1, 0);
     }
     if (posCam == 3) {
@@ -204,7 +313,7 @@ void desenhaCena()
 			break;
     	case 2:
     		strcpy (namePlanet, "Terra");
-			strcpy (sizePlanet, "6378 Km");
+    		strcpy (sizePlanet, "6378 Km");
 			gluLookAt(pos3[0], 0, 2,
 					pos3[0], 0, 0,
 					0, 1, 0);
@@ -252,6 +361,8 @@ void desenhaCena()
 
     glDisable(GL_LIGHTING);
 
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, solTexture);
     glPushMatrix();
 		glRotatef(angles[0], 0, 1, 0);
 		glRotatef(90, 1, 1, 0);
@@ -259,6 +370,7 @@ void desenhaCena()
 		solidSphere(scaleSol, esferaLados, esferaLados);
 
 	glPopMatrix();
+	glDisable(GL_TEXTURE_2D);
 
 	//Desenha asteroides
 	new Asteroids(200, sizeAsteroids, posXAsteroids, angles, posAsteroids);
@@ -277,30 +389,32 @@ void desenhaCena()
 
 
 	//Mercurio
-	new World(angles[0], angles[0], pos1, 0.1, isView ? 0 : 0, false);
+	new World(angles[0], angles[0], pos1, 0.1, isView ? 0 : 0, false, mercurioTexture, luaTexture);
 
 	//Venus
-	new World(angles[1], angles[0], pos2, 0.3, isView ? 0 : 0, false);
+	new World(angles[1], angles[0], pos2, 0.3, isView ? 0 : 0, false, venusTexture, luaTexture);
 
 	//Terra
-	new World(angles[2], angles[0], pos3, 0.2, isView ? 1 : 0, true);
+	new World(angles[2], angles[0], pos3, 0.2, isView ? 1 : 0, true, terraTexture, luaTexture);
 
 	//Marte
-	new World(angles[3], angles[1], pos4, 0.15, isView ? 2 : 0, false);
+	new World(angles[3], angles[1], pos4, 0.15, isView ? 2 : 0, false, marsTexture, luaTexture);
 
 	//Jupiter
-	new World(angles[4], angles[2], pos5, 0.7, isView ? 4 : 0, false);
+	new World(angles[4], angles[2], pos5, 0.7, isView ? 4 : 0, false, jupiterTexture, luaTexture);
 
 	//Saturno
-	new World(angles[5], angles[3], pos6, 0.6, isView ? 9 : 0, false);
+	new World(angles[5], angles[3], pos6, 0.6, isView ? 9 : 0, false, saturnoTexture, luaTexture);
 
 	//Urano
-	new World(angles[6], angles[4], pos7, 0.5, isView ? 5 : 0, false);
+	new World(angles[6], angles[4], pos7, 0.5, isView ? 5 : 0, false, uranoTexture, luaTexture);
 
 	//Netuno
-	new World(angles[7], angles[5], pos8, 0.5, isView ? 3 : 0, false);
+	new World(angles[7], angles[5], pos8, 0.5, isView ? 3 : 0, false, netunoTexture, luaTexture);
 
 	//Plutao
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, luaTexture);
 	glPushMatrix();
 		glRotatef(0, 1.0, 0.0, 0.0); // Rotação no eixo x
 		glRotatef(angles[8], 1.0, 1.0, 0.0); // Rotação no eixo y
@@ -309,6 +423,7 @@ void desenhaCena()
 		solidSphere(0.3, 20, 20);
 
 	glPopMatrix();
+	glDisable(GL_TEXTURE_2D);
 
     glutSwapBuffers();
 }
@@ -439,17 +554,10 @@ void rotacionaEsfera() {
 void imprimirAjudaConsole(void)
 {
     cout << "Ajuda:" << endl;
-    cout << "  Aperte 'l' para ligar/desligar a iluminacao do OpenGL." << endl
-         << "  Aperte 'w' para ligar/desligar a fonte de luz branca." << endl
-         << "  Aperte 'g' para ligar/desligar a fonte de luz verde." << endl
-         << "  Aperte 'd/D' para aumentar/reduzir a intensidade difusa da luz branca." << endl
-         << "  Aperte 'e/E' para aumentar/reduzir a intensidade especular da luz branca." << endl
-         << "  Aperte 'm/M' para aumentar/reduzir a intensidade da luz ambiente global." << endl
-         << "  Aperte 's/S' para aumentar/reduzir o expoente especular do material." << endl
-         << "  Aperte 'p' para alternar entre fonte posicional ou direcional." << endl
-         << "  Aperte 't' para alternar entre modo com/sem textura." << endl
-         << "  Aperte '+/-' para aumentar/diminuir a redondeza da esfera." << endl
-         << "  Aperte as setas para rotacionar a fonte de luz branca" << endl;
+    cout << "  Aperte '1, 2 ou 3' para alterar entre as cameras." << endl
+         << "  Aperte 'espaço' para saber informação de cada planeta." << endl
+         << "  Aperte 'esc' para sair." << endl
+         << "  Aperte 'l' para ligar ou desligar a luz do sol." << endl;
 }
 
 void posicionaCamera(int x, int y) {

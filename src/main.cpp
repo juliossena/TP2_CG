@@ -5,6 +5,7 @@
 #include <GL/freeglut.h>
 #include <cmath>
 #include "models/Rgb.h"
+#include "models/World.h"
 
 using namespace std;
 
@@ -112,10 +113,8 @@ void desenhaCena()
     float lightSpec0[] = { e, e, e, 1.0 };
 
     float posSol[] = { 0.0, 0.0, 0.0, p };
-    float pos1[] = { 1.0, 0, 0, p };
-    float pos2[] = { 2.0, 0, 0, p };
 
-    float scaleSol = 0.5;
+    float scaleSol = 1;
     float scale1 = 0.3;
     float scale2 = 0.1;
 
@@ -138,7 +137,7 @@ void desenhaCena()
     informacoesTela();
 
     if (posCam == 1) {
-    	gluLookAt(0, 10, 5,
+    	gluLookAt(0, 30, 5,
 				  0, 0, 0,
 				  0, 1, 0);
     } else if (posCam == 2) {
@@ -146,6 +145,11 @@ void desenhaCena()
     			0, 0, 0,
 				0, 1, 0);
     }
+    if (posCam == 3) {
+    				gluLookAt(0, 0, 7,
+    						  0, 0, 0,
+    						  0, 1, 0);
+    			}
 
     glDisable(GL_LIGHTING);
 
@@ -169,7 +173,16 @@ void desenhaCena()
 
     // Desenha a esfera grande e bem arredondada
 
-    glPushMatrix();
+    float pos1[] = { 2.0, 0, 0, p };
+	float pos2[] = { 4.0, 0, 0, p };
+	float pos3[] = { 6.0, 0, 0, p };
+	float pos4[] = { 8.0, 0, 0, p };
+	float pos5[] = { 10.0, 0, 0, p };
+	float pos6[] = { 12.0, 0, 0, p };
+	float pos7[] = { 14.0, 0, 0, p };
+	float pos8[] = { 16.0, 0, 0, p };
+
+    /*glPushMatrix();
             glRotatef(0, 1.0, 0.0, 0.0); // Rotação no eixo x
             glRotatef(angles[6], 0.0, 1.0, 0.0); // Rotação no eixo y
 
@@ -183,21 +196,34 @@ void desenhaCena()
 				solidSphere(scale2, esferaLados, esferaLados);
 
 			glPopMatrix();
-			if (posCam == 3) {
-						    											gluLookAt(0, 0, 7,
-						    													  0, 0, 0,
-						    													  0, 1, 0);
-						    										}
-	glPopMatrix();
-
-	glPushMatrix();
-			glRotatef(0, 1.0, 0.0, 0.0); // Rotação no eixo x
-			glRotatef(angles[2], 0.0, 1.0, 0.0); // Rotação no eixo y
-			glTranslatef(pos2[0], pos2[1], pos2[2]);
-			solidSphere(scale2, esferaLados, esferaLados);
+	glPopMatrix();*/
 
 
-	glPopMatrix();
+
+	//Mercurio
+	new World(angles[0], angles[0], pos1, 0.1, 0);
+
+	//Venus
+	new World(angles[1], angles[0], pos2, 0.3, 0);
+
+	//Terra
+	new World(angles[2], angles[0], pos3, 0.2, 1);
+
+	//Marte
+	new World(angles[3], angles[1], pos4, 0.15, 2);
+
+	//Jupiter
+	new World(angles[4], angles[2], pos5, 0.7, 4);
+
+	//Saturno
+	new World(angles[5], angles[3], pos6, 0.6, 9);
+
+	//Urano
+	new World(angles[6], angles[4], pos7, 0.5, 5);
+
+	//Netuno
+	new World(angles[7], angles[5], pos8, 0.5, 3);
+
     glutSwapBuffers();
 }
 
@@ -295,13 +321,13 @@ void specialKeyInput(int key, int x, int y)
 	switch(key) {
 		// Tecla para cima
 		case 101:
-			if (posY < 10) posY += 0.1;
+			if (posY < 30) posY += 0.1;
 
 			break;
 
 		//Tecla para baixo
 		case 103:
-			if (posY > -10) posY -= 0.1;
+			if (posY > -30) posY -= 0.1;
 
 			break;
 
@@ -326,19 +352,19 @@ void resize(int w, int h)
 
     glMatrixMode (GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(50.0, 1, 1, 20.0);
+    gluPerspective(70.0, 1, 1, 70.0);
     glMatrixMode(GL_MODELVIEW);
 }
 
 void rotacionaEsfera() {
-	angles[0] += .002f;
-	angles[1] += .005f;
-	angles[2] += .01f;
-	angles[3] += .02f;
-	angles[4] += .03f;
-	angles[5] += .05f;
-	angles[6] += .1f;
-	angles[7] += .2f;
+	angles[0] += .99f;
+	angles[1] += .4f;
+	angles[2] += .2f;
+	angles[3] += .1f;
+	angles[4] += .02f;
+	angles[5] += .008f;
+	angles[6] += .004f;
+	angles[7] += .002f;
 	angles[8] += .4f;
     anguloEsferaY += .1f;
     glutPostRedisplay();
@@ -373,7 +399,7 @@ int main(int argc, char *argv[])
     glutInit(&argc, argv);
 
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
-    glutInitWindowSize(500, 500);
+    glutInitWindowSize(800, 800);
     glutInitWindowPosition (100, 100);
     glutCreateWindow("Universo");
     glutDisplayFunc(desenhaCena);

@@ -6,10 +6,13 @@
 #include <cmath>
 #include "models/Rgb.h"
 #include "models/World.h"
+#include "models/Asteroids.h"
 #include "functions/escreveTexto.h"
+#include <time.h>
 
 using namespace std;
 
+int numberRan(int smaller, int bigger);
 static bool isLightingOn = true;
 static float d = 1.0;           // Intensidade da cor difusa da luz branca
 static float e = 1.0;           // Intensidade da cor especular da luz branca
@@ -26,6 +29,9 @@ static float anguloEsferaY = 0;                 // Rotação da esfera em torno 
 static int esferaLados = 20;                   // Quantas subdivisões latitudinais/longitudinais da esfera
 static bool localViewer = false;
 
+int posAsteroids[1000];
+float sizeAsteroids[1000];
+float posXAsteroids[1000];
 bool isView = true;
 float distancePlanet = 2;
 int posCam = 1;
@@ -35,7 +41,7 @@ float posY = 0;
 char namePlanet[100] = "";
 char sizePlanet[100] = "";
 
-static float angles[50];
+static float angles[100];
 
 Rgb *yellow = new Rgb(1.0, 1.0, 0);
 Rgb *blue = new Rgb(0, 0, 1.0);
@@ -138,10 +144,10 @@ void desenhaCena()
 	float pos2[] = { 4.0, 0, 0, p };
 	float pos3[] = { 6.0, 0, 0, p };
 	float pos4[] = { 8.0, 0, 0, p };
-	float pos5[] = { 10.0, 0, 0, p };
-	float pos6[] = { 12.0, 0, 0, p };
-	float pos7[] = { 14.0, 0, 0, p };
-	float pos8[] = { 16.0, 0, 0, p };
+	float pos5[] = { 14.0, 0, 0, p };
+	float pos6[] = { 16.0, 0, 0, p };
+	float pos7[] = { 18.0, 0, 0, p };
+	float pos8[] = { 20.0, 0, 0, p };
 
     // Propriedades da fonte de luz LIGHT0
     glLightfv(GL_LIGHT0, GL_AMBIENT, lightAmb);
@@ -254,6 +260,8 @@ void desenhaCena()
 
 	glPopMatrix();
 
+	//Desenha asteroides
+	new Asteroids(200, sizeAsteroids, posXAsteroids, angles, posAsteroids);
 
 	if (isLightingOn) {
 		glEnable(GL_LIGHTING);
@@ -265,24 +273,6 @@ void desenhaCena()
     glColor3f(1, 1, 1);
 
     // Desenha a esfera grande e bem arredondada
-
-
-
-    /*glPushMatrix();
-            glRotatef(0, 1.0, 0.0, 0.0); // Rotação no eixo x
-            glRotatef(angles[6], 0.0, 1.0, 0.0); // Rotação no eixo y
-
-            glTranslatef(pos1[0], pos1[1], pos1[2]);
-            solidSphere(scale1, esferaLados, esferaLados);
-
-            glPushMatrix();
-				glRotatef(0, 1.0, 0.0, 0.0); // Rotação no eixo x
-				glRotatef(angles[7], 0.0, 1.0, 0.0); // Rotação no eixo y
-				glTranslatef(pos1[0], pos1[1], pos1[2]);
-				solidSphere(scale2, esferaLados, esferaLados);
-
-			glPopMatrix();
-	glPopMatrix();*/
 
 
 
@@ -309,6 +299,16 @@ void desenhaCena()
 
 	//Netuno
 	new World(angles[7], angles[5], pos8, 0.5, isView ? 3 : 0, false);
+
+	//Plutao
+	glPushMatrix();
+		glRotatef(0, 1.0, 0.0, 0.0); // Rotação no eixo x
+		glRotatef(angles[8], 1.0, 1.0, 0.0); // Rotação no eixo y
+
+		glTranslatef(22.0, 0.0, 0.0);
+		solidSphere(0.3, 20, 20);
+
+	glPopMatrix();
 
     glutSwapBuffers();
 }
@@ -410,6 +410,27 @@ void rotacionaEsfera() {
 	angles[6] += .004f;
 	angles[7] += .002f;
 	angles[8] += .4f;
+	angles[9] += .04f;
+	angles[10] += .34f;
+	angles[11] += .42f;
+	angles[12] += .32f;
+	angles[13] += .54f;
+	angles[14] += .12f;
+	angles[15] += .321f;
+	angles[16] += .65f;
+	angles[17] += .323f;
+	angles[18] += .643f;
+	angles[19] += .425f;
+	angles[20] += .78f;
+	angles[21] += .587f;
+	angles[22] += .7089f;
+	angles[23] += .435f;
+	angles[24] += .875f;
+	angles[25] += .43f;
+	angles[26] += .76f;
+	angles[27] += .754f;
+	angles[28] += .45f;
+	angles[29] += .7654f;
     anguloEsferaY += .1f;
     glutPostRedisplay();
 }
@@ -437,8 +458,30 @@ void posicionaCamera(int x, int y) {
     glutPostRedisplay();
 }
 
+void initPosAsteroids() {
+	for (int i = 0 ; i < 1000 ; i ++) {
+		posAsteroids[i] = numberRan(0, 360);
+		sizeAsteroids[i] = numberRan(1, 10) / 100.0;
+		posXAsteroids[i] = numberRan(9.5 * 100, 12.5 * 100) / 100.0;
+	}
+}
+
+int numberRan(int smaller, int bigger) {
+	static int Init = 0;
+	int rc;
+
+	if (Init == 0) {
+		srand(time(NULL));
+		Init = 1;
+	}
+	rc = (rand() % (bigger - smaller + 1) + smaller);
+
+	return (rc);
+}
+
 int main(int argc, char *argv[])
 {
+	initPosAsteroids();
     imprimirAjudaConsole();
     glutInit(&argc, argv);
 

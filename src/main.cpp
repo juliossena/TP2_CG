@@ -6,6 +6,7 @@
 #include <cmath>
 #include "models/Rgb.h"
 #include "models/World.h"
+#include "functions/escreveTexto.h"
 
 using namespace std;
 
@@ -16,6 +17,7 @@ static float m = 0.2;           // Intensidade da luz ambiente global
 static float p = 1.0;           // A luz branca é posicional?
 static float s = 50.0;          // Expoente especular do material (shininess)
 float matShine[] = { s };                       // expoente especular (shininess)
+static long font = (long)GLUT_BITMAP_8_BY_13;
 static float xAngle = 0.0, yAngle = 0.0;        // Rotação da luz branca
 static char theStringBuffer[10];                // String buffer
 static float xMouse = 150, yMouse = 1050;        // (x,y) do ponteiro do mouse
@@ -25,8 +27,11 @@ static int esferaLados = 20;                   // Quantas subdivisões latitudin
 static bool localViewer = false;
 
 int posCam = 1;
+int planetSelected = -1;
 float posX = 0;
 float posY = 0;
+char namePlanet[100] = "";
+char sizePlanet[100] = "";
 
 static float angles[50];
 
@@ -44,6 +49,12 @@ void floatParaString(char * destStr, int precision, float val)
     destStr[precision] = '\0';
 }
 
+void escreveTextoNaTela(void *font, char *string)
+{
+    char *c;
+    for (c = string; *c != '\0'; c++) glutBitmapCharacter(font, *c);
+}
+
 // Escreve as informações variáveis na tela
 void informacoesTela(void)
 {
@@ -51,10 +62,13 @@ void informacoesTela(void)
     glColor3f(.85f, .85f, .85f);
 
     glRasterPos3f(-1.0, 1.10, -2.0);
+    escreveTextoNaTela((void*)font, (char*)"Planeta: ");
+    escreveTextoNaTela((void*)font, namePlanet);
 
     floatParaString(theStringBuffer, 4, m);
-    glRasterPos3f(-1.0, 1.00, -2.0);
-    glRasterPos3f(-1.0, 0.95, -2.0);
+	glRasterPos3f(-1.0, 1.00, -2.0);
+	escreveTextoNaTela((void*)font, (char*)"Raio do planeta: ");
+	escreveTextoNaTela((void*)font, sizePlanet);
 
     glRasterPos3f(-1.0, 0.85, -2.0);
     glRasterPos3f(-1.0, 0.80, -2.0);
@@ -118,6 +132,15 @@ void desenhaCena()
     float scale1 = 0.3;
     float scale2 = 0.1;
 
+    float pos1[] = { 2.0, 0, 0, p };
+	float pos2[] = { 4.0, 0, 0, p };
+	float pos3[] = { 6.0, 0, 0, p };
+	float pos4[] = { 8.0, 0, 0, p };
+	float pos5[] = { 10.0, 0, 0, p };
+	float pos6[] = { 12.0, 0, 0, p };
+	float pos7[] = { 14.0, 0, 0, p };
+	float pos8[] = { 16.0, 0, 0, p };
+
     // Propriedades da fonte de luz LIGHT0
     glLightfv(GL_LIGHT0, GL_AMBIENT, lightAmb);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, lightSol);
@@ -134,7 +157,8 @@ void desenhaCena()
 
     glLoadIdentity();
 
-    informacoesTela();
+
+
 
     if (posCam == 1) {
     	gluLookAt(0, 30, 5,
@@ -146,10 +170,76 @@ void desenhaCena()
 				0, 1, 0);
     }
     if (posCam == 3) {
-    				gluLookAt(0, 0, 7,
-    						  0, 0, 0,
-    						  0, 1, 0);
-    			}
+		gluLookAt(6.0, 0, 2,
+				6.0, 0, 0,
+				  0, 1, 0);
+		glRotatef(0, 1.0, 0.0, 0.0); // Rotação no eixo x
+		glRotatef(-angles[2], 0.0, 1.0, 0.0); // Rotação no eixo y
+	}
+    if (posCam == 4) {
+    	informacoesTela();
+    	switch(planetSelected) {
+    	case 0:
+    		strcpy (namePlanet, "Mercurio");
+    		strcpy (sizePlanet, "2439 Km");
+    		gluLookAt(pos1[0], 0, 2,
+    				pos1[0], 0, 0,
+					0, 1, 0);
+    		break;
+    	case 1:
+    		strcpy (namePlanet, "Venus");
+			strcpy (sizePlanet, "6051 Km");
+			gluLookAt(pos2[0], 0, 2,
+					pos2[0], 0, 0,
+					0, 1, 0);
+			break;
+    	case 2:
+    		strcpy (namePlanet, "Terra");
+			strcpy (sizePlanet, "6378 Km");
+			gluLookAt(pos3[0], 0, 2,
+					pos3[0], 0, 0,
+					0, 1, 0);
+			break;
+		case 3:
+			strcpy (namePlanet, "Marte");
+			strcpy (sizePlanet, "3397 Km");
+			gluLookAt(pos4[0], 0, 2,
+					pos4[0], 0, 0,
+					0, 1, 0);
+			break;
+		case 4:
+			strcpy (namePlanet, "Jupiter");
+			strcpy (sizePlanet, "71492 Km");
+			gluLookAt(pos5[0], 0, 2,
+					pos5[0], 0, 0,
+					0, 1, 0);
+			break;
+		case 5:
+			strcpy (namePlanet, "Saturno");
+			strcpy (sizePlanet, "60268 Km");
+			gluLookAt(pos6[0], 0, 2,
+					pos6[0], 0, 0,
+					0, 1, 0);
+			break;
+		case 6:
+			strcpy (namePlanet, "Urano");
+			strcpy (sizePlanet, "51018 Km");
+			gluLookAt(pos7[0], 0, 2,
+					pos7[0], 0, 0,
+					0, 1, 0);
+			break;
+		case 7:
+			strcpy (namePlanet, "Netuno");
+			strcpy (sizePlanet, "49538 Km");
+			gluLookAt(pos8[0], 0, 2,
+					pos8[0], 0, 0,
+					0, 1, 0);
+			break;
+    	}
+
+		glRotatef(0, 1.0, 0.0, 0.0); // Rotação no eixo x
+		glRotatef(-angles[planetSelected], 0.0, 1.0, 0.0); // Rotação no eixo y
+	}
 
     glDisable(GL_LIGHTING);
 
@@ -173,14 +263,7 @@ void desenhaCena()
 
     // Desenha a esfera grande e bem arredondada
 
-    float pos1[] = { 2.0, 0, 0, p };
-	float pos2[] = { 4.0, 0, 0, p };
-	float pos3[] = { 6.0, 0, 0, p };
-	float pos4[] = { 8.0, 0, 0, p };
-	float pos5[] = { 10.0, 0, 0, p };
-	float pos6[] = { 12.0, 0, 0, p };
-	float pos7[] = { 14.0, 0, 0, p };
-	float pos8[] = { 16.0, 0, 0, p };
+
 
     /*glPushMatrix();
             glRotatef(0, 1.0, 0.0, 0.0); // Rotação no eixo x
@@ -201,28 +284,28 @@ void desenhaCena()
 
 
 	//Mercurio
-	new World(angles[0], angles[0], pos1, 0.1, 0);
+	new World(angles[0], angles[0], pos1, 0.1, 0, false);
 
 	//Venus
-	new World(angles[1], angles[0], pos2, 0.3, 0);
+	new World(angles[1], angles[0], pos2, 0.3, 0, false);
 
 	//Terra
-	new World(angles[2], angles[0], pos3, 0.2, 1);
+	new World(angles[2], angles[0], pos3, 0.2, 1, true);
 
 	//Marte
-	new World(angles[3], angles[1], pos4, 0.15, 2);
+	new World(angles[3], angles[1], pos4, 0.15, 2, false);
 
 	//Jupiter
-	new World(angles[4], angles[2], pos5, 0.7, 4);
+	new World(angles[4], angles[2], pos5, 0.7, 4, false);
 
 	//Saturno
-	new World(angles[5], angles[3], pos6, 0.6, 9);
+	new World(angles[5], angles[3], pos6, 0.6, 9, false);
 
 	//Urano
-	new World(angles[6], angles[4], pos7, 0.5, 5);
+	new World(angles[6], angles[4], pos7, 0.5, 5, false);
 
 	//Netuno
-	new World(angles[7], angles[5], pos8, 0.5, 3);
+	new World(angles[7], angles[5], pos8, 0.5, 3, false);
 
     glutSwapBuffers();
 }
@@ -232,6 +315,11 @@ void keyInput(unsigned char key, int x, int y)
 {
     switch (key)
     {
+    case 32:
+    	posCam = 4;
+    	planetSelected += 1;
+    	if (planetSelected > 7) planetSelected = 0;
+    	break;
     case 27:
         exit(0);
         break;
@@ -298,26 +386,6 @@ void keyInput(unsigned char key, int x, int y)
 // Callback para setas do teclado
 void specialKeyInput(int key, int x, int y)
 {
-    if(key == GLUT_KEY_DOWN)
-    {
-        xAngle++;
-        if (xAngle > 360.0) xAngle -= 360.0;
-    }
-    if(key == GLUT_KEY_UP)
-    {
-        xAngle--;
-        if (xAngle < 0.0) xAngle += 360.0;
-    }
-    if(key == GLUT_KEY_RIGHT)
-    {
-        yAngle++;
-        if (yAngle > 360.0) yAngle -= 360.0;
-    }
-    if(key == GLUT_KEY_LEFT)
-    {
-        yAngle--;
-        if (yAngle < 0.0) yAngle += 360.0;
-    }
 	switch(key) {
 		// Tecla para cima
 		case 101:

@@ -13,7 +13,7 @@
 void solidSphereIntern(float radius, int stacks, int columns);
 int numberRandon(int smaller, int bigger);
 
-World::World(float angle, float angleSatellitesfloat, float pos[], float scale, int numberSatellites) {
+World::World(float angle, float angleSatellitesfloat, float pos[], float scale, int numberSatellites, bool isEarth) {
 	// TODO Auto-generated constructor stub
 	glPushMatrix();
 		glRotatef(0, 1.0, 0.0, 0.0); // Rotação no eixo x
@@ -24,12 +24,23 @@ World::World(float angle, float angleSatellitesfloat, float pos[], float scale, 
 		for (int i = 0 ; i < numberSatellites ; i++) {
 			glPushMatrix();
 				glRotatef(0, 1, 0.0, 0.0); // Rotação no eixo x
-				glRotatef(angleSatellitesfloat, i * (360 / numberSatellites), 1.0, 0.0); // Rotação no eixo y
-				glTranslatef(1.0, 0, 0);
+				glRotatef(angleSatellitesfloat / (i + 1), 0, 1.0, 0.0); // Rotação no eixo y
+				glTranslatef(1, 0, 0);
 				solidSphereIntern(scale / 10.0 , 20, 20);
 
 			glPopMatrix();
 		}
+
+		if (isEarth) {
+			glPushMatrix();
+				glRotatef(0, 1, 0.0, 0.0); // Rotação no eixo x
+				glRotatef(angleSatellitesfloat / 2, 0, 1.0, 0.0); // Rotação no eixo y
+				glTranslatef(0.5, 0, 0);
+				glutWireSphere(scale / 2.0 , 2, 2);
+			glPopMatrix();
+		}
+
+
 	glPopMatrix();
 }
 

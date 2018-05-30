@@ -10,7 +10,7 @@
 
 class World {
 public:
-	World(float angle, float angleSatellites, float pos[], float scale, int numberSatellites);
+	World(float angle, float angleSatellites, float pos[], float scale, int numberSatellites, bool isEarth);
 	virtual ~World();
 };
 

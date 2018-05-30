@@ -34,7 +34,7 @@ World::World(float angle, float angleSatellitesfloat, float pos[], float scale, 
 		if (isEarth) {
 			glPushMatrix();
 				glRotatef(0, 1, 0.0, 0.0); // Rotação no eixo x
-				glRotatef(angleSatellitesfloat / 2, 0, 1.0, 0.0); // Rotação no eixo y
+				glRotatef(270, 0, 1.0, 0.0); // Rotação no eixo y
 				glTranslatef(0.5, 0, 0);
 				glutWireSphere(scale / 2.0 , 2, 2);
 			glPopMatrix();

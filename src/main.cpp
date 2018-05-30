@@ -26,6 +26,8 @@ static float anguloEsferaY = 0;                 // Rotação da esfera em torno 
 static int esferaLados = 20;                   // Quantas subdivisões latitudinais/longitudinais da esfera
 static bool localViewer = false;
 
+bool isView = true;
+float distancePlanet = 2;
 int posCam = 1;
 int planetSelected = -1;
 float posX = 0;
@@ -170,9 +172,10 @@ void desenhaCena()
 				0, 1, 0);
     }
     if (posCam == 3) {
-		gluLookAt(6.0, 0, 2,
+		gluLookAt(6.0, 0, distancePlanet,
 				6.0, 0, 0,
 				  0, 1, 0);
+
 		glRotatef(0, 1.0, 0.0, 0.0); // Rotação no eixo x
 		glRotatef(-angles[2], 0.0, 1.0, 0.0); // Rotação no eixo y
 	}
@@ -284,28 +287,28 @@ void desenhaCena()
 
 
 	//Mercurio
-	new World(angles[0], angles[0], pos1, 0.1, 0, false);
+	new World(angles[0], angles[0], pos1, 0.1, isView ? 0 : 0, false);
 
 	//Venus
-	new World(angles[1], angles[0], pos2, 0.3, 0, false);
+	new World(angles[1], angles[0], pos2, 0.3, isView ? 0 : 0, false);
 
 	//Terra
-	new World(angles[2], angles[0], pos3, 0.2, 1, true);
+	new World(angles[2], angles[0], pos3, 0.2, isView ? 1 : 0, true);
 
 	//Marte
-	new World(angles[3], angles[1], pos4, 0.15, 2, false);
+	new World(angles[3], angles[1], pos4, 0.15, isView ? 2 : 0, false);
 
 	//Jupiter
-	new World(angles[4], angles[2], pos5, 0.7, 4, false);
+	new World(angles[4], angles[2], pos5, 0.7, isView ? 4 : 0, false);
 
 	//Saturno
-	new World(angles[5], angles[3], pos6, 0.6, 9, false);
+	new World(angles[5], angles[3], pos6, 0.6, isView ? 9 : 0, false);
 
 	//Urano
-	new World(angles[6], angles[4], pos7, 0.5, 5, false);
+	new World(angles[6], angles[4], pos7, 0.5, isView ? 5 : 0, false);
 
 	//Netuno
-	new World(angles[7], angles[5], pos8, 0.5, 3, false);
+	new World(angles[7], angles[5], pos8, 0.5, isView ? 3 : 0, false);
 
     glutSwapBuffers();
 }
@@ -336,47 +339,10 @@ void keyInput(unsigned char key, int x, int y)
 	case '3':
 		posCam = 3;
 		break;
-    case 'p':
-    case 'P':
-        if (p) p = 0.0;
-        else p = 1.0;
-        break;
-    case 'd':
-        if (d > 0.0) d -= 0.05;
-        break;
-    case 'D':
-        if (d < 1.0) d += 0.05;
-        break;
-    case 'e':
-        if (e > 0.0) e -= 0.05;
-        break;
-    case 'E':
-        if (e < 1.0) e += 0.05;
-        break;
-    case 's':
-        if (s > 5.0) s -= 2.00;
-        break;
-    case 'S':
-        if (s < 100.0) s += 2.00;
-        break;
-    case 'm':
-        if (m > 0.0) m -= 0.05;
-        break;
-    case 'M':
-        if (m < 1.0) m += 0.05;
-        break;
-    case 'v':
-    case 'V':
-        localViewer = !localViewer;
-        break;
-    case '+':
-        esferaLados += 5;
-        esferaLados = min(200, esferaLados);
-        break;
-    case '-':
-        esferaLados -= 5;
-        esferaLados = max(20, esferaLados);
-        break;
+	case 'o':
+	case 'O':
+		isView ? isView = false : isView = true;
+		break;
     default:
         break;
     }
@@ -389,13 +355,23 @@ void specialKeyInput(int key, int x, int y)
 	switch(key) {
 		// Tecla para cima
 		case 101:
-			if (posY < 30) posY += 0.1;
+			if (posCam == 3) {
+				if (distancePlanet > 1.5)	 distancePlanet -= 0.5;
+			} else {
+				if (posY < 30) posY += 0.1;
+			}
+
 
 			break;
 
 		//Tecla para baixo
 		case 103:
-			if (posY > -30) posY -= 0.1;
+			if (posCam == 3) {
+				if (distancePlanet < 5) distancePlanet += 0.5;
+			} else {
+				if (posY > -30) posY -= 0.1;
+			}
+
 
 			break;
 
